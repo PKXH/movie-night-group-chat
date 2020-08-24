@@ -27,8 +27,9 @@
     <script>
 
         // connect using the passed-in port number
+	var ip = location.hostname;
 	var port = <%= port %>;
-	var socket = io.connect('http://localhost:' + port);
+	var socket = io.connect('http://'+ip+':'+port);
 
         // submit text message without reloading the page
 	$('form').submit(function(e){

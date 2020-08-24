@@ -26,13 +26,13 @@ io.sockets.on('connection', function(socket) {
     socket.on('username', function(username) {
 	socket.username = username;
 	if (socket.username != null) {
-	    io.emit('is_online', '🟢 <i>' + socket.username + ' joined the chat..</i>');
+	    io.emit('is_online', '🟢 <i>' + socket.username + ' joined the chat../i>');
 	}
     });
 
     socket.on('disconnect', function(username) {
 	if (socket.username != null) {
-	    io.emit('is_online', '🔴 <i>' + socket.username + ' left the chat..</i>');
+	    io.emit('is_online', '🔴 <i>' + socket.username + ' left the chat.</i>');
 	}
     })
 

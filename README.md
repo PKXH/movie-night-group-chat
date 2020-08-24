@@ -2,12 +2,13 @@
 Web-based group chat for the movie night crowd ;)
 
 ## Installation
-1. Install **webfs** web server (via your favorite package installer)
-2. Install **node.js** ([via your favorite package installer](https://nodejs.org/en/download/package-manager/))
-3. Clone the **movie-night-group-chat** repo.
-4. Open console, `cd` into the cloned repo directory and type `npm init`, following setup defaults.
-5. Use `npm install <module>` to install **express**, **socket.io**, **ejs**, and **commander** modules.
-6. Unblock port **8081** and **8082**, if firewalled.
+1. Install **webfs** web server (via your favorite package manager)
+2. Install **node.js** ([via your favorite package manager](https://nodejs.org/en/download/package-manager/))
+3. Install **npm** (via your favorage package manager)
+4. Clone the **movie-night-group-chat** repo.
+5. Open console, `cd` into the cloned repo directory and type `npm init`, following setup defaults.
+6. Use `npm install <module>` to install **express**, **socket.io**, **ejs**, and **commander** modules.
+7. Unblock port **8081** and **8082**, if firewalled.
 
 ## Run Procedure
 1. Start chat page web server: `sudo webfsd -F -p 8081 -f index.html`

@@ -6,13 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PKXH/movie-night-group-chat.git"
+  },
   "author": "Burke, Carter J.",
   "license": "ISC",
-  "dependencies": {
-    "commander": "^6.0.0",
-    "ejs": "^3.1.5",
-    "express": "^4.17.1",
-    "minimist": "^1.2.5",
-    "socket.io": "^2.3.0"
-  }
+  "bugs": {
+    "url": "https://github.com/PKXH/movie-night-group-chat/issues"
+  },
+  "homepage": "https://github.com/PKXH/movie-night-group-chat#readme"
 }

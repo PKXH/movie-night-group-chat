@@ -5,8 +5,21 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
+const { program } = require('commander');
+program.version('1.0.0');
+
+program
+//  .option('-d, --debug', 'output extra debugging')
+//  .option('-s, --small', 'small pizza size')
+  .option('-p, --port <port>', 'listen for connection on specified port', 8080);
+
+program.parse(process.argv);
+var port = program.port;
+
+console.log("port: ", port);
+
 app.get('/', function(req, res) {
-    res.render('index.ejs');
+    res.render('index.ejs', {'port': port});
 });
 
 io.sockets.on('connection', function(socket) {
@@ -28,6 +41,6 @@ io.sockets.on('connection', function(socket) {
     });
 });
 
-const server = http.listen(8080, function() {
-    console.log('listening on *:8080');
+const server = http.listen(port, function() {
+    console.log('listening on *:', port);
 });

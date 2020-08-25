@@ -1,7 +1,6 @@
 // establish connection to our chat database and return a handle from it if successful
 
 const mongoose = require("mongoose");
-mongoose.Promise = require("bluebird");
 const url = "mongodb://localhost/chat";
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });  
 

@@ -21,7 +21,7 @@
       <ul id="messages">
         <!-- here's where we display the pre-session chat history from the db --> 
         <% for(let i=0; i<msgs.length; i++) { %>
-          <li><strong><%= msgs[i].username %></strong>: <%=msgs[i].text %></li>
+	<li><strong><%= msgs[i].username %></strong> <%-msgs[i].text %></li>
         <% } %>
       </ul>
     </div>

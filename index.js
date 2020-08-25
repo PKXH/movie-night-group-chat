@@ -27,7 +27,8 @@ const mongoose = require("mongoose");
 function convert_query_results(data) {
     var msgs = []
     for (var i=0; i<data.length; i++) {
-        var obj = { 'username':data[i].username, 'text':data[i].message };
+	let delim = data[i].username.length>0 ? ':' : '';
+        var obj = { 'username':(data[i].username+delim), 'text':data[i].message };
         msgs.push(obj);	
     }
     return msgs;
@@ -50,39 +51,47 @@ app.get('/', function(req, res) {
     res.render('index.ejs', {port: port, msgs: history}); 
 });
 
+function save_chat_message_to_db( username, text ) {
+//    let delim = username.length > 0 ? ':' : '';
+    let chatMessage = new Chat({ message: text, username: username });
+    chatMessage.save(function (err, chatMessage) {
+        if (err) return console.error(err);
+//            console.log('wrote Chat(\'' + text + '\', \'' + socket.username + '\') to db');
+
+        // we're just pushed a new chat message to the database, so let's update the
+        // chat history log so new joiners will be able to pick up the whole conversation
+        //
+        query = Chat.find({});
+        query.exec(function(err, msgs) {
+            if (err) return console.error(err);
+            history = convert_query_results(msgs);
+         });
+    });
+}
+
 // register websocket events
 io.sockets.on('connection', function(socket) {
 
     socket.on('username', function(username) {
 	socket.username = username;
 	if (socket.username != null) {
-	    io.emit('is_online', '💚 <i>' + socket.username + ' joined the chat.</i>');
+	    let join_msg = '💚 <i>' + socket.username + ' joined the chat.</i>';
+	    io.emit('is_online', join_msg);
+            save_chat_message_to_db('', join_msg);
 	}
     });
 
     socket.on('disconnect', function(username) {
 	if (socket.username != null) {
-	    io.emit('is_online', '💔 <i>' + socket.username + ' left the chat.</i>');
+            let leave_msg = '💔 <i>' + socket.username + ' left the chat.</i>';
+	    io.emit('is_online', leave_msg);
+            save_chat_message_to_db('', leave_msg);
 	}
     })
 
     socket.on('chat_message', function(message) {
 	io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
-
-        let chatMessage = new Chat({ message: message, username: socket.username });
-        chatMessage.save(function (err, chatMessage) {
-            if (err) return console.error(err);
-//            console.log('wrote Chat(\'' + message + '\', \'' + socket.username + '\') to db');
-
-            // we're just pushed a new chat message to the database, so let's update the
-            // chat history log so new joiners will be able to pick up the whole conversation
-	    //
-            query = Chat.find({});
-            query.exec(function(err, msgs) {
-                if (err) return console.error(err);
-                history = convert_query_results(msgs);
-             });
-        });
+        save_chat_message_to_db( socket.username, message ); 
     });
 });
 

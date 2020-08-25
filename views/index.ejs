@@ -17,8 +17,27 @@
   </head>
   <body>
     <div class="message-container">
-      <ul id="messages"></ul>
+      <ul id="messages">
+    <% for(let i=0; i<msgs.length; i++) { %>
+        <!--article-->
+	<li><strong><%= msgs[i].username %></strong>: <%=msgs[i].text %></li>
+            <!--p><%= msgs[i].text %></p-->
+        <!--/article-->
+	<!--$('#messages').append($('<li>').html(msg));-->
+    <% } %>
+
+      </ul>
     </div>
+
+
+
+
+    <div>
+
+    </div>
+
+
+
     <div class="input-container">
     <form action="/" method="POST" id="chatForm">
       <input id="txt" autocomplete="off" autofocus="on" oninput="isTyping()" placeholder="type your message here..." /><button>Send</button>
@@ -26,10 +45,73 @@
     </div>
     <script>
 
+        // database connection
+//	const mongoose = require("mongoose"); 
+ //       const Chat = require("../models/ChatSchema");
+//        const dbconnect = require("./../dbconnect");
+////        const bodyParser = require("body-parser");
+//        const chatRouter = require("./../route/chatroute");
+
+        // routes
+//        app.use("/chats", chatRouter);
+
         // connect using the passed-in port number
 	var ip = location.hostname;
 	var port = <%= port %>;
 	var socket = io.connect('http://'+ip+':'+port);
+
+//try{
+////	prompt("a");
+//	var ser = <%- JSON.stringify(msgs) %>;
+////prompt("ser: " + ser);
+////prompt("typeof ser: " + typeof ser );
+//	var history = JSON.parse(ser);
+////prompt("history: " + history);
+//
+//        const max_num_msgs = 1000;
+//        var num_msgs = history.length;
+//        var history_length = num_msgs > max_num_msgs ? max_num_msgs : num_msgs; 
+////prompt("b");
+////	var history = <%- JSON.stringify(msgs) %>; 
+////        document.getElementById("demo").innerHTML = history[_count].name;
+////prompt("c");
+////        prompt("hist: " + history_length);
+////        prompt("hist_decode: " + history[0].username ); 
+//}
+//catch (err) {
+//	prompt("err: " + err);
+//}
+
+        // fetching initial chat messages from the database
+//prompt("msgs length : " + msgs.length);
+//try{
+//	prompt("2");
+//        var query = Chat.find({});
+//}
+//catch (err){
+//	prompt("3:" + err);
+//	console.error(err);
+//}
+//        query.exec(function(err, msgs) {
+//            if (err) return console.error(err);
+//             prompt("number of msgs: " + msgs.length);
+//	    console.log(msgs);
+//	});
+
+//        (function() {
+//            fetch("/chats")
+//            .then(data => {
+//                return data.json();
+//            })
+//        .then(json => {
+//            json.map(data => {
+// //               let li = document.createElement("li");
+//                let messages = document.getElementById("messages");
+////                let span = document.createElement("span");
+//		$('#messages').append($('<li>').html(data.message));
+//            });
+//            window.scroll(0, document.documentElement.offsetHeight);
+//        });
 
         // submit text message without reloading the page
 	$('form').submit(function(e){

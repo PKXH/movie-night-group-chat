@@ -11,7 +11,7 @@ Web-based group chat for the movie night crowd ;)
 6. Unblock port **8082** and **27017**, if firewalled.
 
 ## Run Procedure
-1. Start MongoDB daemon: `/usr/local/opt/mongodb-community\@3.2/bin/mongod --config /usr/local/etc/mongod.con` (or something similar)
+1. Start MongoDB daemon: `/usr/local/opt/mongodb-community\@3.2/bin/mongod --config /usr/local/etc/mongod.conf` (or something similar)
 2. Start chat page service: `node index.js --port=8082`
 3. Connect to chat by pointing browser at `http://xxx.xxx.xxx.xxx:8082`
 

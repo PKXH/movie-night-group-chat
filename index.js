@@ -50,7 +50,7 @@ app.get('/', function(req, res) {
     res.render('index.ejs', {port: port, msgs: history}); 
 });
 
-// register websockets events
+// register websocket events
 io.sockets.on('connection', function(socket) {
 
     socket.on('username', function(username) {

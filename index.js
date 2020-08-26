@@ -11,10 +11,12 @@ program.version('1.0.0');
 program
 //  .option('-d, --debug', 'output extra debugging')
 //  .option('-s, --small', 'small pizza size')
-  .option('-p, --port <port>', 'listen for connection on specified port', 8080);
+  .option('-p, --port <port>', 'listen for connection on specified port', 8080)
+  .option('-t, --tag <tag name>', 'endpoint tag-name for connection web address', '');
 
 program.parse(process.argv);
 var port = program.port;
+var tag  = program.tag;
 
 // database connection
 const Chat = require("./models/ChatSchema");
@@ -27,8 +29,9 @@ const mongoose = require("mongoose");
 function convert_query_results(data) {
     var msgs = []
     for (var i=0; i<data.length; i++) {
-	let delim = data[i].username.length>0 ? ':' : '';
-        var obj = { 'username':(data[i].username+delim), 'text':data[i].message };
+	let safe_username = data[i].username !== undefined ? data[i].username : '<undefined>';
+	let delim = safe_username.length>0 ? ':' : '';
+        var obj = { 'username':(safe_username+delim), 'text':data[i].message };
         msgs.push(obj);	
     }
     return msgs;
@@ -47,7 +50,7 @@ query.exec(function(err, msgs) {
     });
 
 // This is called to render the webpage 
-app.get('/', function(req, res) {
+app.get('/'+tag, function(req, res) {
     res.render('index.ejs', {port: port, msgs: history}); 
 });
 

@@ -8,7 +8,7 @@ Web-based group chat for the movie night crowd ;)
 3. Clone the **movie-night-group-chat** repo.
 4. Open console, `cd` into the cloned repo directory and type `npm init`, following setup defaults.
 5. Use `npm install <module>` to install **express**, **socket.io**, **ejs**, and **commander** modules.
-6. Unblock port **8082** and **27017**, if firewalled.
+6. Unblock port **8082**, if firewalled.
 
 ## Run Procedure
 1. Start MongoDB daemon: `/usr/local/opt/mongodb-community\@3.2/bin/mongod --config /usr/local/etc/mongod.conf` (or something similar; see [MongoDB's instructions for running as a service](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/#run-mongodb-community-edition))

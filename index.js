@@ -12,11 +12,11 @@ program
 //  .option('-d, --debug', 'output extra debugging')
 //  .option('-s, --small', 'small pizza size')
   .option('-p, --port <port>', 'listen for connection on specified port', 8080)
-  .option('-t, --tag <tag name>', 'endpoint tag-name for connection web address', '');
+  .option('-k, --key <stream key name>', 'endpoint stream key for connection web address', '');
 
 program.parse(process.argv);
 var port = program.port;
-var tag  = program.tag;
+var key  = program.key;
 
 // database connection
 const Chat = require("./models/ChatSchema");
@@ -50,12 +50,11 @@ query.exec(function(err, msgs) {
     });
 
 // This is called to render the webpage 
-app.get('/'+tag, function(req, res) {
+app.get('/'+key, function(req, res) {
     res.render('index.ejs', {port: port, msgs: history}); 
 });
 
 function save_chat_message_to_db( username, text ) {
-//    let delim = username.length > 0 ? ':' : '';
     let chatMessage = new Chat({ message: text, username: username });
     chatMessage.save(function (err, chatMessage) {
         if (err) return console.error(err);

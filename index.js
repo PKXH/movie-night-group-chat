@@ -74,6 +74,12 @@ function save_chat_message_to_db( username, text ) {
 // register websocket events
 io.sockets.on('connection', function(socket) {
 
+    // dispatch the chat message to clients and add it to the db chat history 
+    function process_chat_message(username, text) {
+        io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + text);
+        save_chat_message_to_db(socket.username, text);
+    };
+
     socket.on('username', function(username) {
 	socket.username = username;
 	if (socket.username != null) {
@@ -92,8 +98,18 @@ io.sockets.on('connection', function(socket) {
     })
 
     socket.on('chat_message', function(message) {
-	io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
-        save_chat_message_to_db( socket.username, message ); 
+        if (socket.username == null) {
+            console.log('message from undefined username; re-establishing identity');
+            io.emit('identity_check', message);
+        } else {
+            process_chat_message(socket.username, message);
+	}
+    });
+
+    socket.on('id_chat_message', function(username, message) {
+        socket.username = username;
+        console.log ('user id re-established: ' + username);
+        process_chat_message(username, message);
     });
 });
 

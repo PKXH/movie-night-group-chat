@@ -38,6 +38,7 @@
 	var ip = location.hostname;
 	var port = <%= port %>;
 	var socket = io.connect('http://'+ip+':'+port);
+        var username = null;
 
         // submit text message without reloading the page
 	$('form').submit(function(e){
@@ -59,13 +60,17 @@
             window.scroll(0, document.documentElement.offsetHeight);
 	});
 
+        // the server has "forgotten" who this is; resend the chat message + identity
+        socket.on('identity_check', function(message) {
+            socket.emit('id_chat_message', username, message); 
+	});
+
         // verify that we have a non-empty value
         function value_is_set(value) {
 	    return(value && value !== "" && !value.match(/^[ ]+$/i))
 	}
 
 	// ask username
-	var username = null;
         while (!value_is_set(username)) {
 	    username = prompt('Choose a screen name');
 	}

@@ -1,16 +1,19 @@
+<!-- front end for movie night web chat application -->
+<!-- author: PKXH -->
+
 <!DOCTYPE html>
 <html>
   <head>
     <title>Movie Night All-Platform Group Chat</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-	body {font: 13px Helvetica, Arial; }
-	form { background: #fff; padding: 3px; position: static; bottom: 0; width: 100%; border-color: #000; border-top-style: solid; border-top-width: 1px;}
-	form input { border-style: solid; border-width: 1px; padding: 10px; width: 85%; margin-right: .5%; }
-	form button { width: 9%; background: #6495ED; border: none; padding: 10px; margin-left: 2%; }
-	#messages { list-style-type: none; margin: 0; padding: 0; }
-	#messages li { padding: 5px 10px; }
-	#messages li:nth-child(odd) { background: #eee; }
+        body {font: 13px Helvetica, Arial; }
+        form { background: #fff; padding: 3px; position: static; bottom: 0; width: 100%; border-color: #000; border-top-style: solid; border-top-width: 1px;}
+        form input { border-style: solid; border-width: 1px; padding: 10px; width: 85%; margin-right: .5%; }
+        form button { width: 9%; background: #6495ED; border: none; padding: 10px; margin-left: 2%; }
+        #messages { list-style-type: none; margin: 0; padding: 0; }
+        #messages li { padding: 5px 10px; }
+        #messages li:nth-child(odd) { background: #eee; }
     </style>
     <!--script src="showdown.js"></script-->
     <script src="../../socket.io/socket.io.js"></script>
@@ -23,7 +26,7 @@
       <ul id="messages">
         <!-- here's where we display the pre-session chat history from the db --> 
         <% for(let i=0; i<msgs.length; i++) { %>
-	<li><strong><%= msgs[i].username %></strong> <%-msgs[i].text %></li>
+            <li><strong><%= msgs[i].username %></strong> <%-msgs[i].text %></li>
         <% } %>
       </ul>
     </div>
@@ -36,17 +39,51 @@
 
     <script>
 
-	// use this to expand markdown to html
-        var converter = new showdown.Converter();
+        //
+        // Extension to block <p></p> thrown in by showdown module
+        // see: https://jsfiddle.net/tivie/5jd4nr2a/
+        //
+        showdown.extension('only-inline-stuff', function () {
+            return [{
+                type: 'output',
+                filter: function (text) {
+                    // remove paragraphs
+                    text = text.replace(/<\/?p[^>]*>/g, '');
 
+                    // remove code (if you want)
+                    text = text.replace(/<\/?code[^>]*>/g, '');
+
+                    //add other stuff here that you want to remove
+                    // text = text.replace(, '');
+                    return text;
+                }
+            }];
+        });
+
+
+        //
+        // use this to expand markdown to html
+        //
+        try {
+            var converter = new showdown.Converter( { extensions: ['only-inline-stuff'] } );
+        }
+        catch(err) {
+            console.log( 'error initialing showdown converter (' + err + ')' );
+            throw(err);
+        }
+
+        //
         // connect using the passed-in port number
-	var ip = location.hostname;
-	var port = <%= port %>;
-	var socket = io.connect('http://'+ip+':'+port);
+        //
+        var ip = location.hostname;
+        var port = <%= port %>;
+        var socket = io.connect('http://'+ip+':'+port);
         var username = null;
 
+        //
         // render html-injection harmless
         // see: https://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript
+        //
         function escapeHtml(unsafe) {
             return unsafe
                 .replace(/&/g, "&amp;")
@@ -56,41 +93,53 @@
                 .replace(/'/g, "&#039;");
         }
 
+        //
         // submit (html-injection-disabled, markdown-html-expanded) text message without reloading the page
-	$('form').submit(function(e){
-	    e.preventDefault(); // prevents page reloading
+        //
+        $('form').submit(function(e){
+            e.preventDefault(); // prevents page reloading
             socket.emit('chat_message', converter.makeHtml( escapeHtml( $('#txt').val() ) ) );
-	    $('#txt').val(''); // clear the text box
-	    return false;
-	});
+            $('#txt').val(''); // clear the text box
+            return false;
+        });
 
+        //
 	// append the chat text message
-	socket.on('chat_message', function(msg) {
-	    $('#messages').append($('<li>').html(msg));
-	    window.scroll(0, document.documentElement.offsetHeight);
-	});
-
-	// append text if someone is online
-	socket.on('is_online', function(username) {
-	    $('#messages').append($('<li>').html(username));
+        //
+        socket.on('chat_message', function(msg) {
+            $('#messages').append($('<li>').html(msg));
             window.scroll(0, document.documentElement.offsetHeight);
-	});
+        });
 
+        //
+        // append text if someone is online
+        //
+        socket.on('is_online', function(username) {
+            $('#messages').append($('<li>').html(username));
+            window.scroll(0, document.documentElement.offsetHeight);
+        });
+
+        //
         // the server has "forgotten" who this is; resend the chat message + identity
+        //
         socket.on('identity_check', function(message) {
             socket.emit('id_chat_message', username, message); 
-	});
+        });
 
+        //
         // verify that we have a non-empty value
+        //
         function value_is_set(value) {
-	    return(value && value !== "" && !value.match(/^[ ]+$/i))
-	}
+            return(value && value !== "" && !value.match(/^[ ]+$/i))
+        }
 
-	// ask for a username
+        //
+        // ask for a username
+        //
         while (!value_is_set(username)) {
-	    username = prompt('Choose a screen name');
-	}
-	socket.emit('username', username);
+            username = prompt('Choose a screen name');
+        }
+        socket.emit('username', username);
 
     </script>
   </body>

@@ -108,7 +108,7 @@ function save_chat_message_to_db( username, text ) {
         });
     }
     catch(err) {
-        console.log( 'error while trying to save chat message \'' + text + '\' from user ' + username + ' to the db: ' + err );
+        console.log( 'error while trying to save chat message \'' + text + '\' from user \'' + username + '\' to the db: ' + err );
         throw(err)
     }
 }
@@ -139,13 +139,13 @@ io.sockets.on('connection', function(socket) {
 	    socket.username = username;
 	    if (socket.username != null) {
 	        let join_msg = '💚 <i>' + socket.username + ' joined the chat.</i>';
-                debug_log(socket.username + ' joined the chat');
+                debug_log( 'user \'' + socket.username + '\' joined the chat' );
 	        io.emit('is_online', join_msg);
                 save_chat_message_to_db('', join_msg);
 	    }
         }
         catch(err) {
-            console.log( 'error trying to process connection for user ' + username + ' (' + err + ')' );
+            console.log( 'error trying to process connection for user \'' + username + '\' (' + err + ')' );
         }
     });
 
@@ -156,13 +156,13 @@ io.sockets.on('connection', function(socket) {
         try {
 	    if (socket.username != null) {
                 let leave_msg = '💔 <i>' + socket.username + ' left the chat.</i>';
-                debug_log(socket.username + ' left the chat');
+                debug_log( 'user \'' + socket.username + '\' left the chat' );
 	        io.emit('is_online', leave_msg);
                 save_chat_message_to_db('', leave_msg);
 	    }
         }
         catch(err) {
-            console.log( 'error trying to process disconnection for user ' + socket.username + ' (' + err + ')' );
+            console.log( 'error trying to process disconnection for user \'' + socket.username + '\' (' + err + ')' );
         }
     })
 
@@ -180,7 +180,7 @@ io.sockets.on('connection', function(socket) {
 	    }
         }
         catch(err) {
-            console.log( 'error trying to process incoming chat message from user ' + socket.username + ' (' + err + ')' );
+            console.log( 'error trying to process incoming chat message from user \'' + socket.username + '\' (' + err + ')' );
         }
     });
 
@@ -190,11 +190,11 @@ io.sockets.on('connection', function(socket) {
     socket.on('id_chat_message', function(username, message) {
         try {
             socket.username = username;
-            debug_log( 'user id re-established: ' + username );
+            debug_log( 'user id re-established for user \'' + username + '\'' );
             process_chat_message(username, message);
         }
         catch(err) {
-            console.log( 'error processing identy re-establishment for user ' + username + ' (' + err + ')' );
+            console.log( 'error processing identy re-establishment for user \'' + username + '\' (' + err + ')' );
         }
     });
 });

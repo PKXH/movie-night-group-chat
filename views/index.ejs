@@ -12,8 +12,10 @@
 	#messages li { padding: 5px 10px; }
 	#messages li:nth-child(odd) { background: #eee; }
     </style>
+    <!--script src="showdown.js"></script-->
     <script src="../../socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
   </head>
   <body>
 
@@ -34,17 +36,31 @@
 
     <script>
 
+	// use this to expand markdown to html
+        var converter = new showdown.Converter();
+
         // connect using the passed-in port number
 	var ip = location.hostname;
 	var port = <%= port %>;
 	var socket = io.connect('http://'+ip+':'+port);
         var username = null;
 
-        // submit text message without reloading the page
+        // render html-injection harmless
+        // see: https://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // submit (html-injection-disabled, markdown-html-expanded) text message without reloading the page
 	$('form').submit(function(e){
 	    e.preventDefault(); // prevents page reloading
-            socket.emit('chat_message', $('#txt').val());
-	    $('#txt').val('');
+            socket.emit('chat_message', converter.makeHtml( escapeHtml( $('#txt').val() ) ) );
+	    $('#txt').val(''); // clear the text box
 	    return false;
 	});
 
@@ -70,7 +86,7 @@
 	    return(value && value !== "" && !value.match(/^[ ]+$/i))
 	}
 
-	// ask username
+	// ask for a username
         while (!value_is_set(username)) {
 	    username = prompt('Choose a screen name');
 	}

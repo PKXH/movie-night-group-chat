@@ -19,5 +19,11 @@ Web-based group chat for the movie night crowd ;)
 1. Stop chat service with `ctrl-C`.
 2. Stop MongoDB daemon with `ctrl-C` (if started as a service, see [MongoDB's instructions for stopping service](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/#run-mongodb-community-edition)).
 
+## Erasing Chat History
+1. Start MongoDB daemon: `/usr/local/opt/mongodb-community\@3.2/bin/mongod --config /usr/local/etc/mongod.conf` (or something similar; see [MongoDB's instructions for running as a service](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/#run-mongodb-community-edition))
+2. Start "mongo" shell by typing `/usr/local/opt/mongodb-community\@3.2/bin/mongo` (or wherever it is on your system).
+3. In the mongo shell, type `use chat`.
+4. In the mongo shell, type `db.chats.drop()`. A return value of `true` indicates the chat data has been purged.
+
 ## Troubleshooting
 1. If you are testing on `localhost` or an isolated LAN, some of your remote-hosted CDN packages may not load and the chat may "partially" "work".

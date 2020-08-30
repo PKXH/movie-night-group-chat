@@ -48,8 +48,8 @@ function convert_query_results( data ) {
     try {
         var msgs = []
         for (var i=0; i<data.length; i++) {
-	    let safe_username = data[i].username !== undefined ? data[i].username : '<undefined>';
-	    let delim = safe_username.length>0 ? ':' : '';
+        let safe_username = data[i].username !== undefined ? data[i].username : '<undefined>';
+        let delim = safe_username.length>0 ? ':' : '';
             var obj = { 'username':(safe_username+delim), 'text':data[i].message };
             msgs.push(obj);
         }
@@ -194,11 +194,11 @@ io.sockets.on('connection', function(socket) {
                 // log back in
                 //
                 debug_log( 'message from undefined username; re-establishing identity for reported user \'' + reported_username + '\'' );
-		//process_chat_message(reported_username, message);
+        //process_chat_message(reported_username, message);
                 on_chat_received(false);
             } else {
                 process_chat_message(socket.username, message);
-		on_chat_received(true);
+        on_chat_received(true);
             }
         }
         catch(err) {

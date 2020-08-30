@@ -114,12 +114,12 @@
             }
         }
         //
-	// *** callback ***
-	//
+        // *** callback ***
+        //
         function send_chat_message( text, on_chat_message_sent ) {
             socket.emit('chat_message',
                         username,
-                        last_text = converter.makeHtml( escapeHtml( text ) ),
+                        converter.makeHtml( escapeHtml( last_text = text ) ),
                             function(success) {
                                 on_chat_received( success );
                                 if (on_chat_message_sent != null) {

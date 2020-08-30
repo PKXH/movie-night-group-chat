@@ -26,4 +26,4 @@ Web-based group chat for the movie night crowd ;)
 4. In the mongo shell, type `db.chats.drop()`. A return value of `true` indicates the chat data has been purged.
 
 ## Troubleshooting
-1. If you are testing on `localhost` or an isolated LAN, some of your remote-hosted CDN packages may not load and the chat may "partially" "work".
+1. If you are testing on `localhost` or an isolated LAN, some of the remote-hosted CDN packages may not load and the chat may "partially" "work".

@@ -20,4 +20,4 @@ Web-based group chat for the movie night crowd ;)
 2. Stop MongoDB daemon with `ctrl-C` (if started as a service, see [MongoDB's instructions for stopping service](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/#run-mongodb-community-edition)).
 
 ## Troubleshooting
-1. If you are offline, some of your CDN packages may not load and the chat may "partially" "work"
+1. If you are testing on `localhost` or an isolated LAN, some of your remote-hosted CDN packages may not load and the chat may "partially" "work".

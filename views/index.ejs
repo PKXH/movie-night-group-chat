@@ -1,7 +1,6 @@
+<!DOCTYPE html>
 <!-- front end for movie night web chat application -->
 <!-- author: PKXH -->
-
-<!DOCTYPE html>
 <html>
   <head>
     <title>Movie Night All-Platform Group Chat</title>
@@ -80,7 +79,9 @@
         var ip = location.hostname;
         var port = <%= port %>;
         var socket = io.connect('http://'+ip+':'+port);
-        var username = null;
+        var username = sessionStorage.getItem('username');
+        var block_reloading_refresh = sessionStorage.getItem('block_reloading_refresh');
+        var last_text = sessionStorage.getItem('last_text');
 
         //
         // render html-injection harmless
@@ -98,15 +99,84 @@
         //
         // submit (html-injection-disabled, markdown-html-expanded) text message without reloading the page
         //
+        //
+        function on_chat_received( success ) {
+            if (success) {
+                sessionStorage.setItem('last_text', '');
+                last_text = '';
+            } else {
+                //
+                // we expect this condition when the connection has been quietly dropped; have the
+                // user (auto)sign in again
+                //
+                sessionStorage.setItem('last_text', last_text);
+                window.location.reload(true);
+            }
+        }
+        //
+	// *** callback ***
+	//
+        function send_chat_message( text, on_chat_message_sent ) {
+            socket.emit('chat_message',
+                        username,
+                        last_text = converter.makeHtml( escapeHtml( text ) ),
+                            function(success) {
+                                on_chat_received( success );
+                                if (on_chat_message_sent != null) {
+                                    on_chat_message_sent();
+                                }
+                            }
+                        );
+        }
+
+        //
+        // verify that we have a non-empty value
+        //
+        function value_is_set(value) {
+            return(value && value !== "" && !value.match(/^[ ]+$/i))
+        }
+
+        //
+        // ask for a username
+        //
+        function get_username( on_get_username_complete ) {
+            //
+            // if we're silently reconnecting, this username should already be set,
+            // so we may not even run this loop even once
+            //
+            while (!value_is_set(username)) {
+                username = prompt('Choose a screen name');
+            }
+
+            socket.emit('username',
+                username,
+                function( success ) {
+                    on_username_received( success );
+                    if (on_get_username_complete != null) {
+                        on_get_username_complete( success );
+                    }
+                }
+            );
+        }
+        //
+        // *** callback ***
+        //
+        function on_username_received( success ) {
+            if (success) {
+                sessionStorage.setItem('username', username);
+            }
+        }
+
         $('form').submit(function(e){
             e.preventDefault(); // prevents page reloading
-            socket.emit('chat_message', converter.makeHtml( escapeHtml( $('#txt').val() ) ) );
+            //socket.emit('chat_message', last_text = converter.makeHtml( escapeHtml( $('#txt').val() ) ), on_chat_received );
+            send_chat_message( $('#txt').val() );
             $('#txt').val(''); // clear the text box
             return false;
         });
 
         //
-	// append the chat text message
+        // append the chat text message
         //
         socket.on('chat_message', function(msg) {
             $('#messages').append($('<li>').html(msg));
@@ -122,26 +192,28 @@
         });
 
         //
-        // the server has "forgotten" who this is; resend the chat message + identity
+        // we have silently reconnected, and there may have been a message that was
+        // in the middle of being sent when we got into this mess -- we should be back on
+        // now so resend it
         //
-        socket.on('identity_check', function(message) {
-            socket.emit('id_chat_message', username, message); 
-        });
-
-        //
-        // verify that we have a non-empty value
-        //
-        function value_is_set(value) {
-            return(value && value !== "" && !value.match(/^[ ]+$/i))
+        function on_silent_reconnect_complete( success ) {
+            if (success) {
+                if (last_text != null && last_text.length > 0) {
+                    send_chat_message( last_text );
+                }
+            }
         }
 
         //
-        // ask for a username
+        // everything is set up; ask the user to log in
         //
-        while (!value_is_set(username)) {
-            username = prompt('Choose a screen name');
+        if (block_reloading_refresh == null) {
+            sessionStorage.setItem('block_reloading_refresh', 'active');
+            window.location.reload(true);
+        } else {
+            get_username( username!=null ? on_silent_reconnect_complete : null );
         }
-        socket.emit('username', username);
+        block_reloading_refresh = null;
 
     </script>
   </body>

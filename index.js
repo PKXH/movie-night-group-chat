@@ -17,12 +17,16 @@ program.version('1.0.0');
 program
   .option('-d, --debug_logging', 'output debug logging to console')
   .option('-p, --port <port>', 'listen for connection on specified port', 8080)
-  .option('-k, --key <stream key name>', 'endpoint stream key for connection web address', '');
+  .option('-k, --key <stream key name>', 'endpoint stream key for connection web address', '')
+  .option('-s, --color_scheme <color scheme>', 'color scheme for action icons: hearts, black-and-blue, red-and-black, aqua, autumn', 'autumn');
 //
 program.parse(process.argv);
 var debug_logging_active = program.debug_logging;
 var port = program.port;
 var key  = program.key;
+var color_scheme = program.color_scheme;
+
+let { join_icon, leave_icon } = get_icons( color_scheme );
 
 //
 // database connection
@@ -38,6 +42,42 @@ function debug_log( msg ) {
     if (debug_logging_active) {
         console.log( 'debug: ' + msg );
     }
+}
+
+function get_icons( scheme ) {
+    let join_icon = null;
+    let leave_icon = null;
+
+    switch (scheme) {
+        
+        case 'hearts':
+            join_icon  = '💚';
+            leave_icon = '💔';
+            break;
+
+        case 'black-and-blue':
+            join_icon  = '🔵';
+            leave_icon = '⚫️';
+            break;
+
+        case 'red-and-black':
+            join_icon  = '🔴';
+            leave_icon = '⚫️';
+            break;
+
+        case 'aqua':
+            join_icon  = '🟢';
+            leave_icon = '🔵';
+            break;
+
+        case 'autumn':
+        default:
+            join_icon  = '🟠';
+            leave_icon = '🟤';
+            break;
+    }
+
+    return { join_icon, leave_icon };
 }
 
 //
@@ -146,7 +186,7 @@ io.sockets.on('connection', function(socket) {
         try {
             socket.username = username;
             if (socket.username != null) {
-                let join_msg = '💚 <i>' + socket.username + ' joined the chat.</i>';
+                let join_msg = join_icon + ' <i>' + socket.username + ' joined the chat.</i>';
                 debug_log( 'user \'' + socket.username + '\' joined the chat' );
                 io.emit('is_online', join_msg);
                 save_chat_message_to_db('', join_msg);
@@ -171,7 +211,7 @@ io.sockets.on('connection', function(socket) {
     socket.on('disconnect', function(username) {
         try {
             if (socket.username != null) {
-                let leave_msg = '💔 <i>' + socket.username + ' left the chat.</i>';
+                let leave_msg = leave_icon + ' <i>' + socket.username + ' left the chat.</i>';
                 debug_log( 'user \'' + socket.username + '\' left the chat' );
                 io.emit('is_online', leave_msg);
                 save_chat_message_to_db('', leave_msg);

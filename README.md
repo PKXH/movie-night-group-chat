@@ -18,3 +18,6 @@ Web-based group chat for the movie night crowd ;)
 ## Shutdown Procedure
 1. Stop chat service with `ctrl-C`.
 2. Stop MongoDB daemon with `ctrl-C` (if started as a service, see [MongoDB's instructions for stopping service](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/#run-mongodb-community-edition)).
+
+## Troubleshooting
+1. If you are offline, some of your CDN packages may not load and the chat may "partially" "work"

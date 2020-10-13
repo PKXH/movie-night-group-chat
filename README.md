@@ -1,5 +1,5 @@
 # movie-night-group-chat
-Web-based group chat for the movie night crowd ;)
+***Web-based group chat for the movie night crowd ;)***
 
 ## Installation
 1. Install **node.js** ([via your favorite package manager](https://nodejs.org/en/download/package-manager/)).
